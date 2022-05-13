@@ -1,7 +1,7 @@
 <?php
 require_once('user_script.php');
 require_once('function/restriction_function.php');
-notLogin('name');
+notLogin('email');
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -1,7 +1,7 @@
 <?php
 require_once('user_script.php');
 require_once('function/restriction_function.php');
-isLogin('name');
+isLogin('email');
 ?>
 <!DOCTYPE html>
 <html>
@@ -19,6 +19,7 @@ isLogin('name');
           echo $message;
           if (isset($_SESSION['success'])) {
             echo $_SESSION['success'];
+            unset($_SESSION['success']);
           }
         ?>
       </h3>
