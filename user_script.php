@@ -2,8 +2,9 @@
 
 session_start();
 require_once('database/database_connection.php');
-require_once('function/query_function.php');
-require_once('function/validate_function.php');
+require_once('utilities/query.php');
+require_once('utilities/validate.php');
+require_once('utilities/restriction.php');
 
 $message = "";
 

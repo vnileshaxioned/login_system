@@ -1,6 +1,5 @@
 <?php
 require_once('user_script.php');
-require_once('function/restriction_function.php');
 notLogin('email');
 ?>
 <!DOCTYPE html>
@@ -26,55 +25,22 @@ notLogin('email');
           </form>
         </div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone Number</th>
-            <th>Gender</th>
-            <th>Profile Image</th>
-          </tr>
-        </thead>
-        <tbody>
           <?php
-            $query = selectQuery('users');
+            $query = "SELECT * FROM users WHERE email = '".$_SESSION['email']."'";
             $user_detail = $conn->query($query);
-            
             if ($user_detail > 0) {
-              $id = 1;
               while ($detail = $user_detail->fetch_assoc()) {
           ?>
-          <tr>
-            <td><?php echo $id++; ?></td>
-            <td><?php echo $detail['name']; ?></td>
-            <td><?php echo $detail['email']; ?></td>
-            <td><?php echo $detail['phone_number']; ?></td>
-            <td><?php echo $detail['gender']; ?></td>
-            <td>
-              <?php
-                if ($detail['profile_image']) {
-              ?>
-              <img
-                src="upload/<?php echo $detail['profile_image']; ?>"
-                alt="<?php echo $detail['profile_image']; ?>"
-              />
-              <?php 
-                } else {
-                  echo "No image";
-                }
-              ?>
-            </td>
-            <?php
-                }
-              } else {
-            ?>
-            <td colspan="6">No user data found</td>
-          </tr>
-          <?php } $conn->close(); ?>
-        </tbody>
-      </table>
+            <p>Name: <?php echo $detail['name']; ?></p>
+            <p>Email: <?php echo $detail['email']; ?></p>
+            <p>Phone Number: <?php echo $detail['phone_number']; ?></p>
+            <p>Gender: <?php echo $detail['gender']; ?></p>
+            <form action="edit_user.php" method="post">
+              <input type="hidden" name="user_id" value="<?php echo $detail['id']; ?>">
+              <input type="submit" name="user_edit" value="Edit">
+              <input type="submit" name="user_delete" value="Delete">
+            </form>
+            <?php } } ?>
     </div>
   </body>
 </html>

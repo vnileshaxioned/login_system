@@ -1,6 +1,5 @@
 <?php
 require_once('user_script.php');
-require_once('function/restriction_function.php');
 isLogin('email');
 ?>
 <!DOCTYPE html>

@@ -1,12 +1,12 @@
 <?php
 
-$servername = "localhost";
-$username = "phpmyadmin";
-$password = "root";
-$database_name = "login_system";
+define('HOST', 'localhost');
+define('USER', 'phpmyadmin');
+define('PASSWORD', 'root');
+define('DATABASE_NAME', 'login_system');
 
 try{
-    $conn = new mysqli($servername, $username, $password, $database_name);
+    $conn = new mysqli(HOST, USER, PASSWORD, DATABASE_NAME);
 
     if($conn->connect_error) {
         throw new Exception(die ('Database connection failed ' . $conn->connect_error));
