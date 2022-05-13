@@ -3,7 +3,7 @@
 $servername = "localhost";
 $username = "phpmyadmin";
 $password = "root";
-$database_name = "form";
+$database_name = "login_system";
 
 try{
     $conn = new mysqli($servername, $username, $password, $database_name);
