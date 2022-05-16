@@ -1,6 +1,6 @@
 <?php
-require_once('user_script.php');
-include_once('includes/header.php');
+require_once('admin_script.php');
+include_once('../includes/admin_header.php');
 notLogin('email');
 ?>
     <h3>Users List</h3>
@@ -34,7 +34,7 @@ notLogin('email');
                 if ($detail['profile_image']) {
               ?>
               <img
-                src="upload/<?php echo $detail['profile_image']; ?>"
+                src="../upload/<?php echo $detail['profile_image']; ?>"
                 alt="<?php echo $detail['profile_image']; ?>"
               />
               <?php 

@@ -1,9 +1,17 @@
 <?php
-require_once('user_script.php');
-include_once('includes/header.php');
+require_once('admin_script.php');
+include_once('../includes/admin_header.php');
 notLogin('email');
 ?>
     <h3>Users List</h3>
+    <?php
+      echo $message;
+      if (isset($_SESSION["user_deleted"]) || isset($_SESSION['user_updated'])) {
+        echo $_SESSION["user_deleted"].$_SESSION['user_updated'];
+        unset($_SESSION["user_deleted"]);
+        unset($_SESSION['user_updated']);
+      }
+    ?>
       <table>
         <thead>
           <tr>
@@ -13,6 +21,7 @@ notLogin('email');
             <th>Phone Number</th>
             <th>Gender</th>
             <th>Profile Image</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -34,7 +43,7 @@ notLogin('email');
                 if ($detail['profile_image']) {
               ?>
               <img
-                src="upload/<?php echo $detail['profile_image']; ?>"
+                src="../upload/<?php echo $detail['profile_image']; ?>"
                 alt="<?php echo $detail['profile_image']; ?>"
               />
               <?php 
@@ -42,6 +51,16 @@ notLogin('email');
                   echo "No image";
                 }
               ?>
+            </td>
+            <td>
+              <form action="edit_user.php" method="post">
+                <input type="hidden" name="user_id" value="<?php echo $detail['id']; ?>">
+                <input type="submit" name="user_edit" value="Edit">
+              </form>
+              <form action="admin_script.php" method="post">
+                <input type="hidden" name="user_id" value="<?php echo $detail['id']; ?>">
+                <input type="submit" name="user_delete" value="Delete">
+              </form>
             </td>
             <?php
                 }

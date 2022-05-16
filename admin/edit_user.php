@@ -1,6 +1,7 @@
 <?php
-require_once('user_script.php');
-include_once('includes/header.php');
+require_once('admin_script.php');
+include_once('../includes/admin_header.php');
+notLogin('email');
 ?>
     <h3>User Profile Edit</h3>
       <h3>

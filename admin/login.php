@@ -1,5 +1,5 @@
 <?php
-require_once('user_script.php');
+require_once('admin_script.php');
 isLogin('email');
 ?>
 <!DOCTYPE html>
@@ -9,7 +9,7 @@ isLogin('email');
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>User Details</title>
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="../css/style.css" />
   </head>
   <body>
     <div class="container">
@@ -48,10 +48,9 @@ isLogin('email');
           <input type="checkbox" name="remember" <?php if(isset($_COOKIE["email"])) { ?> checked <?php } ?>/> Remember me
         </div>
         <div class="form-group">
-          <input type="submit" name="user_login" value="Submit" />
+          <input type="submit" name="admin_login" value="Submit" />
         </div>
       </form>
-      <a href="register.php">Register account?</a>
     </div>
   </body>
 </html>
