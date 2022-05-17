@@ -32,13 +32,12 @@ function updateUser($table, $conn, $image, $id, $password = 0, ...$columns) {
     }
 }
 
-function fetchUser($table, $conn, $type, $column, $value = '') {
+function fetchUser($table, $conn, $type = '', $column = '', $value = '') {
     if ($value > 0) {
         $query = $conn->prepare("SELECT * FROM $table WHERE $column = ?");
         $query->bind_param($type, $value);
         $query->execute();
         return $query->get_result();
-        // echo $type;
     } else {
         return $conn->query("SELECT * FROM $table");
     }
