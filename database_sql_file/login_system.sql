@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 13, 2022 at 01:16 PM
+-- Generation Time: May 18, 2022 at 07:16 PM
 -- Server version: 8.0.29-0ubuntu0.20.04.3
 -- PHP Version: 8.0.1
 
@@ -25,31 +25,50 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `admin`
+--
+
+CREATE TABLE `admin` (
+  `id` int NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `email` varchar(150) NOT NULL,
+  `gender` varchar(10) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `profile_image` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `admin`
+--
+
+INSERT INTO `admin` (`id`, `name`, `email`, `gender`, `password`, `profile_image`) VALUES
+(3, 'admin', 'admin@gmail.com', 'Male', '22d48f51a195e9cf0a5ed6d64b2ba3d6f739deea', 'Screenshot from 2020-02-21 18-55-52.png');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
   `id` int NOT NULL,
-  `name` varchar(30) NOT NULL,
-  `email` varchar(30) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `email` varchar(150) NOT NULL,
   `phone_number` varchar(10) NOT NULL,
   `gender` varchar(10) NOT NULL,
-  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `profile_image` varchar(255) DEFAULT NULL
+  `password` varchar(255) NOT NULL,
+  `profile_image` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`id`, `name`, `email`, `phone_number`, `gender`, `password`, `profile_image`) VALUES
-(6, 'Nilesh', 'nilesh@gmail.com', '9898989898', 'Male', 'da38b2d722d6a4bbc377984d5d2b65d5', 'Screenshot from 2020-09-04 12-22-56.png'),
-(7, 'Rajesh', 'rajesh@gmail.com', '9090909090', 'Male', 'd9919aeb2c56dfe427c93c1c5e94d811', 'Screenshot from 2022-05-09 16-39-52.png'),
-(8, 'Vikas', 'vikas@gmail.com', '1234567890', 'Male', '47bf1a9ef636add1c3ead26702ed24c6', 'Screenshot from 2022-05-04 15-22-49.png');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `admin`
+--
+ALTER TABLE `admin`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `users`
@@ -63,10 +82,16 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `admin`
+--
+ALTER TABLE `admin`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
