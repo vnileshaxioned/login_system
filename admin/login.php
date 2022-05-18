@@ -1,6 +1,6 @@
 <?php
 require_once('admin_script.php');
-isLogin('email');
+isLogin('id');
 ?>
 <!DOCTYPE html>
 <html>
@@ -16,10 +16,6 @@ isLogin('email');
       <h3>
         <?php 
           echo $message;
-          if (isset($_SESSION['success'])) {
-            echo $_SESSION['success'];
-            unset($_SESSION['success']);
-          }
         ?>
       </h3>
       <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">

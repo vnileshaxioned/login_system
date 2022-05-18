@@ -1,6 +1,6 @@
 <?php
 require_once('user_script.php');
-isLogin('email');
+isLogin('id');
 ?>
 <!DOCTYPE html>
 <html>

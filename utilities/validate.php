@@ -20,7 +20,7 @@ function validateFormat($pattern, $data, $message) {
 }
 
 function checkPass($pass, $cpass) {
-    $password_check = validateFormat("/^\S*(?=\S*[A-Z])(?=\S*[a-z])(?=\S*[0-9])(?=\S*[@#])\S*$/", $pass, "Uppercase, lowercase, numbers and @# characters needed");
+    $password_check = validateFormat("/^\S*(?=\S*[A-Z])(?=\S*[a-z])(?=\S*[0-9])(?=\S*[@$])\S*$/", $pass, "Uppercase, lowercase, numbers and @, $ characters needed");
     if ($pass !== $cpass) {
         return "Password not match";
     } elseif ($password_check) {
@@ -33,7 +33,7 @@ function checkPass($pass, $cpass) {
 }
 
 function phoneNumber($data) {
-    $check_number = validateFormat("/^[0-9]*$/", $data, "Only numbers are allowed");
+    $check_number = validateFormat("/^[6-9]+[0-9]*$/", $data, "Only numbers are allowed and start with 6,7,8 and 9");
     if ($check_number) {
         return $check_number;
     } else {
@@ -45,7 +45,7 @@ function phoneNumber($data) {
 
 function checkFile($size, $type) {
     if ($type != 'jpg' && $type != 'jpeg' && $type != 'png' && $type != '') {
-        return "File should be in jpg, jpeg & png format allowed";
+        return "File should be in jpg, jpeg and png format allowed";
     } else {
         if ($size > 1000000) {
             return "File is less than or equal to 1mb are allowed";

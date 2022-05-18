@@ -1,7 +1,7 @@
 <?php
 require_once('admin_script.php');
 include_once('../includes/admin_header.php');
-notLogin('email');
+notLogin('id');
 ?>
     <h3>Users List</h3>
       <table>
@@ -19,7 +19,7 @@ notLogin('email');
           <?php
             
             $user_detail = fetchUser('users', $conn);
-            if ($user_detail > 0) {
+            if ($user_detail->num_rows > 0) {
               $id = 1;
               while ($detail = $user_detail->fetch_assoc()) {
           ?>

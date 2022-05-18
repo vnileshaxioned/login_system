@@ -1,17 +1,12 @@
 <?php
 require_once('admin_script.php');
 include_once('../includes/admin_header.php');
-notLogin('email');
+notLogin('id');
 ?>
     <h3>Users List</h3>
-    <?php
-      echo $message;
-      if (isset($_SESSION["user_deleted"]) || isset($_SESSION['user_updated'])) {
-        echo $_SESSION["user_deleted"].$_SESSION['user_updated'];
-        unset($_SESSION["user_deleted"]);
-        unset($_SESSION['user_updated']);
-      }
-    ?>
+    <?php if (isset($_SESSION['user_updated'])) { ?>
+      <h3><?php echo $_SESSION['user_updated']; ?></h3>
+      <?php } ?>
       <table>
         <thead>
           <tr>
@@ -26,9 +21,9 @@ notLogin('email');
         </thead>
         <tbody>
           <?php
-            
+            unset($_SESSION['user_updated']);
             $user_detail = fetchUser('users', $conn);
-            if ($user_detail > 0) {
+            if ($user_detail->num_rows > 0) {
               $id = 1;
               while ($detail = $user_detail->fetch_assoc()) {
           ?>
@@ -53,22 +48,16 @@ notLogin('email');
               ?>
             </td>
             <td>
-              <form action="edit_user.php" method="post">
-                <input type="hidden" name="user_id" value="<?php echo $detail['id']; ?>">
-                <input type="submit" name="user_edit" value="Edit">
-              </form>
-              <form action="admin_script.php" method="post">
-                <input type="hidden" name="user_id" value="<?php echo $detail['id']; ?>">
-                <input type="submit" name="user_delete" value="Delete">
-              </form>
+              <a href="edit_user.php?id=<?php echo $detail['id']; ?>" class="button edit">Edit</a>
+              <a href="users_list.php?delete_id=<?php echo $detail['id']; ?>" class="button delete">Delete</a>
             </td>
             <?php
                 }
               } else {
             ?>
-            <td colspan="6">No user data found</td>
+            <td colspan="7">No user data found</td>
+            <?php } ?>
           </tr>
-          <?php } ?>
         </tbody>
       </table>
     </div>

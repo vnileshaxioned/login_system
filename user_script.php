@@ -32,7 +32,7 @@ if (isset($_POST['user_register'])) {
     $phone_num_check = phoneNumber($phone_num);
     $check_pass = checkPass($pass, $cpass);
     $check_file = checkFile($f_size, $type);
-    $password_encrypt = md5($pass);
+    $password_encrypt = sha1($pass);
 
     if (!($name_error
     || $email_error
@@ -47,7 +47,7 @@ if (isset($_POST['user_register'])) {
 
         try {
             $email_exist = fetchUser('users', $conn, 's', 'email', $email);
-            $email_exist = $email_exist->fetch_assoc();
+            
             if ($email_exist > 0) {
                 throw new Exception ("Email already exist");
             } else {
@@ -78,15 +78,11 @@ if (isset($_POST['user_login'])) {
 
     if (!($email_error || $pass_error)) {
         try{
-            $login_query = $conn->prepare(selectQuery('users')." WHERE email = ? AND password = ?");
-            $login_query->bind_param('ss', $email, md5($password));
-            $login_query->execute();
-            $user = $login_query->get_result()->fetch_assoc();
-
+            $columns = array('email', 'password');
+            $values = array($email, sha1($password));
+            $user = fetchUser('users', $conn, 'ss', $columns, $values);
             if ($user > 0) {
-                $_SESSION['name'] = $user['name'];
-                $_SESSION['email'] = $user['email'];
-                $_SESSION['profile_image'] = $user['profile_image'];
+                $_SESSION['id'] = $user['id'];
 
                 if (!empty($remember_me)) {
                     setcookie('email', $email, time() + 60 * 60);
@@ -117,63 +113,68 @@ if (isset($_POST['user_update'])) {
     $phone_num = validateInput($_POST['phone_number']);
     $gender = validateInput($_POST['gender']);
 
-    $name_error = fieldRequired($name);
-    $email_error = fieldRequired($email);
-    $phone_num_error = fieldRequired($phone_num);
-    $gender_error = fieldRequired($gender);
-    $name_check = validateFormat("/^[a-zA-Z ]*$/", $name, "only characters are allowed");
-    $email_check = validateFormat("/^[a-z0-9\.]+@[a-z]+\.(\S*[a-z])$/", $email, "Invalid email format");
-    $phone_num_check = phoneNumber($phone_num);
-
-    if (!($name_error
-    || $email_error
-    || $email_check
-    || $phone_num_error
-    || $phone_num_check
-    || $gender_error)) {
-
-        try {
-            if (updateUser('users', $conn,'' ,'' , '',$name, $email, $phone_num, $gender, $id)) {
-                $_SESSION['user_updated'] = "Update successful";
-                $_SESSION['name'] = $name;
-                $_SESSION['email'] = $email;
-                header('Location: dashboard.php');
-            } else {
-                throw new Exception ("User detail not updated");
-            }
-        } catch (Exception $e) {
-            $message = $e->getMessage();
-        }
-    }
-    $conn->close();
-}
-
-if (isset($_POST['profile_image_update'])) {
-    $id = validateInput($_POST['user_id']);
     $file_name = validateInput($_FILES['file']['name']);
     $file_size = validateInput($_FILES['file']['size']);
     $type = validateInput(strtolower(pathinfo($file_name,PATHINFO_EXTENSION)));
     $temp_name = validateInput($_FILES['file']['tmp_name']);
     $path = "upload/".$file_name;
-    $check_file = checkFile($file_size, $type);
+    
     try {
-        if ($file_name != '') {
-            if (!$check_file) {
-                if (updateUser('users', $conn, $file_name, $id)) {
-                    $moved = move_uploaded_file($temp_name, $path);
-                    $_SESSION['user_updated'] = "Profile image updated successful";
-                    $_SESSION['profile_image'] = $file_name;
-                    header('Location: dashboard.php');
+        $check_file = checkFile($file_size, $type);
+        $name_error = fieldRequired($name);
+        $email_error = fieldRequired($email);
+        $phone_num_error = fieldRequired($phone_num);
+        $gender_error = fieldRequired($gender);
+        $name_check = validateFormat("/^[a-zA-Z ]*$/", $name, "only characters are allowed");
+        $email_check = validateFormat("/^[a-z0-9\.]+@[a-z]+\.(\S*[a-z])$/", $email, "Invalid email format");
+        $phone_num_check = phoneNumber($phone_num);
+        $name_check_error = $name_error ? $name_error : $name_check;
+        $phone_error = $phone_num_error ? $phone_num_error : $phone_num_check;
+        $error = "name=$name_check_error&phone_number=$phone_error&gender=$gender_error&file=$check_file";
+        if (!($name_error
+        || $name_check
+        || $email_error
+        || $email_check
+        || $phone_num_error
+        || $phone_num_check
+        || $gender_error
+        || $check_file)) {
+
+            if ($id == $_SESSION['id']) {
+                $email_exist = fetchUser('users', $conn, 's', 'email', $email);
+                $f_name = $email_exist['profile_image'];
+
+                if ($email_exist > 0) {
+                    if ($file_name != '') {
+                        if (updateUser('users', $conn,'' , '',$name, $email, $phone_num, $gender, $file_name, $id)) {
+                            $moved = move_uploaded_file($temp_name, $path);
+                            $_SESSION['user_updated'] = "Update successful";
+                            header('Location: dashboard.php');
+                        } else {
+                            throw new Exception ("User detail ok not updated");
+                        }
+                    } else {
+                        if (updateUser('users', $conn,'' , '',$name, $email, $phone_num, $gender, $f_name, $id)) {
+                            $_SESSION['user_updated'] = "Update successful";
+                            header('Location: dashboard.php');
+                        } else {
+                            throw new Exception ("User detail not updated");
+                        }
+                    }
                 } else {
-                    throw new Exception ("User profile image not updated");
+                    throw new Exception ("You are not allow to change email");
                 }
+            } else {
+                throw new Exception ("Please do not change url id");
             }
         } else {
-            throw new Exception ("Please select a image");
+            header("Location: edit_user.php?id=$id&$error");
         }
     } catch (Exception $e) {
-        $message = $e->getMessage();
+        $_SESSION['error'] = $e->getMessage();
+        header("Location: edit_user.php?id=$id");
     }
+    $conn->close();
 }
 
 if (isset($_POST['password_update'])) {
@@ -181,21 +182,27 @@ if (isset($_POST['password_update'])) {
     $current_password = validateInput($_POST['current_password']);
     $new_password = validateInput($_POST['new_password']);
     $confirm_password = validateInput($_POST['confirm_password']);
+    $password_encrypt = sha1($current_password);
+
     $current_password_error = fieldRequired($current_password);
     $new_password_error = fieldRequired($new_password);
     $confirm_password_error = fieldRequired($confirm_password);
     $check_password = checkPass($new_password, $confirm_password);
-    if (!($current_password_error
-        ||$new_password_error
-        ||$confirm_password_error
-        ||$check_password)) {
-        try {
-            $password_exist = $conn->prepare(selectQuery('users').' WHERE password = ? AND id = ?');
-            $password_exist->bind_param('si', md5($current_password), $id);
-            $password_exist->execute();
-            $password_exist = $password_exist->get_result()->fetch_assoc();
+    $new_error = $new_password_error ? $new_password_error : $check_password;
+    $confirm_error = $confirm_password_error ? $confirm_password_error : $check_password;
+    $error = "current=$current_password_error&new=$new_error&confirm=$confirm_error";
+    try {
+        if (!($current_password_error
+            ||$new_password_error
+            ||$confirm_password_error
+            ||$check_password)) {
+            
+            $columns = array('password', 'id');
+            $values = array($password_encrypt, $id);
+            $password_exist = fetchUser('users', $conn, 'si', $columns, $values);
+            
             if ($password_exist) {
-                if (updateUser('users', $conn, '', $id,$new_password)) {
+                if (updateUser('users', $conn, $id, $new_password, '')) {
                     session_destroy();
                     header('Location: login.php');
                 } else {
@@ -204,9 +211,12 @@ if (isset($_POST['password_update'])) {
             } else {
                 throw new Exception ("Current password is wrong");
             }
-        } catch (Exception $e) {
-            $message = $e->getMessage();
+        } else {
+            header("Location: edit_password.php?id=$id&$error");
         }
+    } catch (Exception $e) {
+        $_SESSION['error'] = $e->getMessage();
+        header("Location: edit_password.php?id=$id");
     }
 }
 
